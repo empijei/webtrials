@@ -1,8 +1,8 @@
 import { html } from 'lit';
 import { fixture, expect } from '@open-wc/testing';
 
-import type { MpjMisc } from '../src/mpj-misc.js';
-import '../src/mpj-misc.js';
+import type { MpjMisc } from '../src/mpj-misc-root.js';
+import '../src/mpj-misc-root.js';
 
 describe('MpjMisc', () => {
   let element: MpjMisc;
