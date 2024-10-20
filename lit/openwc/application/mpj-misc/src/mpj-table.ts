@@ -3,6 +3,12 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
+enum SortingOrder {
+  None,
+  Ascending,
+  Descending,
+}
+
 @customElement('mpj-table')
 export class MpjTable extends LitElement {
   static styles = css`
@@ -54,7 +60,7 @@ export class MpjTable extends LitElement {
         <tr>
           ${this.headers.map(
             (h, i) =>
-              html`<th>
+              html`<th @dblclick=${() => this.sortBy(h.id)}>
                 <button @click=${() => this.moveHeader(i, -1)}>&lt;</button
                 >${h.name}<button @click=${() => this.moveHeader(i, 1)}>
                   &gt;
@@ -78,9 +84,40 @@ export class MpjTable extends LitElement {
     if (index + moveBy < 0 || index + moveBy > this.headers.length) {
       return;
     }
-    console.log(index, moveBy, this.headers);
     const h = this.headers.splice(index, 1)[0];
     this.headers.splice(index + moveBy, 0, h);
     this.requestUpdate();
   }
+
+  static orders = ['', '↑', '↓'];
+
+  @property()
+  sortingHeader = 0;
+
+  @property()
+  sortingOrder = SortingOrder.Ascending;
+
+  sortBy(index: number, order: number) {
+    if (index === this.sortingHeader && order === this.sortingOrder) {
+      return;
+    }
+
+    let i = index;
+    // TODO: figure out the order here
+    let o = order;
+    if (o === SortingOrder.None) {
+      o = SortingOrder.Ascending;
+      i = 0;
+    }
+    this.rows.sort((a, b) => {
+      if (a[i] === b[i]) {
+        return 0;
+      }
+      return a[i] < b[i] ? -1 : 1;
+    });
+    this.sortingHeader = i;
+    this.sortingOrder = o;
+  }
+
+  // TODO ↑↓
 }
